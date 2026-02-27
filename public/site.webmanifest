@@ -1,0 +1,27 @@
+{
+  "name": "Emma xolouise",
+  "short_name": "emmaxolouise",
+  "description": "A digital diary of my life. Productivity, lifestyle, fashion & motivating you to be your better self.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafaf9",
+  "theme_color": "#fb7185",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/emma.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/images/emma.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "maskable any"
+    }
+  ],
+  "categories": ["lifestyle", "entertainment", "education"],
+  "lang": "en-GB",
+  "dir": "ltr"
+}

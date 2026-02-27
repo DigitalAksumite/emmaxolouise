@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  /* Primary Brand Colors - Soft & Sophisticated */
+  --color-blush: #fdf2f8;
+  --color-rose: #fda4af;
+  --color-rose-dark: #fb7185;
+  --color-mauve: #e9d5ff;
+  --color-lavender: #c4b5fd;
+  
+  /* Neutral Palette - Clean & Professional */
+  --color-cream: #fafaf9;
+  --color-warm-white: #ffffff;
+  --color-stone: #f5f5f4;
+  --color-slate: #44403c;
+  --color-charcoal: #292524;
+  
+  /* Background & Text */
+  --background: #fafaf9;
+  --foreground: #292524;
+  
+  /* Surface Colors */
+  --color-surface-900: #1c1917;
+  --color-surface-800: #292524;
+  --color-surface-100: #fafaf9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1c1917;
+    --foreground: #fafaf9;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #fb7185 0%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(253, 164, 175, 0.2);
+}
+
+.shadow-soft {
+  box-shadow: 0 4px 20px -2px rgba(251, 113, 133, 0.15);
+}
+
+.shadow-elevated {
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+}

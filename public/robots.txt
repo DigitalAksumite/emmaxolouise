@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://emmaxolouise.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10
+
+# Disallow admin and api routes
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/

@@ -1,0 +1,145 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Play } from "lucide-react";
+
+type LatestVideo = {
+  id: string;
+  title: string;
+  publishedAt: string;
+  thumbnailUrl: string;
+};
+
+type ApiResponse = {
+  videos: LatestVideo[];
+  error?: string;
+};
+
+export function LatestVideos() {
+  const [data, setData] = useState<ApiResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function run() {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/youtube/latest");
+        const json = (await res.json()) as ApiResponse;
+        if (cancelled) return;
+        setData(json);
+      } catch {
+        if (cancelled) return;
+        setData({ videos: [], error: "Failed to load videos." });
+      } finally {
+        if (cancelled) return;
+        setLoading(false);
+      }
+    }
+
+    run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 9 }).map((_, idx) => (
+          <div
+            key={idx}
+            className="group relative overflow-hidden rounded-2xl border border-[#e7e5e4] bg-white p-4"
+          >
+            <div className="aspect-video w-full rounded-xl bg-[#f5f5f4]" />
+            <div className="mt-4 h-4 w-3/4 rounded bg-[#f5f5f4]" />
+            <div className="mt-2 h-3 w-1/2 rounded bg-[#f5f5f4]" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (data?.error) {
+    return (
+      <div className="mt-8 rounded-3xl border border-[#e7e5e4] bg-[#fafaf9] p-8 text-center">
+        <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
+          <span className="text-3xl">🔑</span>
+        </div>
+        <h3 className="mb-2 text-lg font-bold text-[#292524]">
+          YouTube API Not Configured
+        </h3>
+        <p className="mb-4 max-w-md mx-auto text-sm text-[#78716c]">
+          To display Emma&apos;s videos, add a YouTube Data API key to your environment.
+        </p>
+        <div className="rounded-xl bg-white p-4 text-left text-xs text-[#78716c]">
+          <p className="font-semibold mb-2">Quick setup:</p>
+          <ol className="list-decimal list-inside space-y-1">
+            <li>Get a free API key from <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noreferrer" className="text-[#fb7185] hover:underline">Google Cloud Console</a></li>
+            <li>Enable <strong>YouTube Data API v3</strong></li>
+            <li>Create <code className="rounded bg-[#fdf2f8] px-1 py-0.5 text-[#fb7185]">.env.local</code> file with:</li>
+          </ol>
+          <code className="mt-3 block rounded-lg bg-[#292524] p-3 text-green-400 font-mono">
+            YOUTUBE_API_KEY=your_api_key_here
+          </code>
+        </div>
+        <a
+          href="https://www.youtube.com/@emmaxolouise"
+          target="_blank"
+          rel="noreferrer"
+          className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#fb7185] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#fb7185]/20 transition-all hover:bg-[#f43f5e]"
+        >
+          <Play className="h-4 w-4" />
+          Watch on YouTube
+        </a>
+      </div>
+    );
+  }
+
+  if (!data || data.videos.length === 0) {
+    return (
+      <div className="mt-8 text-sm text-[#78716c]">No videos found.</div>
+    );
+  }
+
+  return (
+    <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {data.videos.map((video) => (
+        <a
+          key={video.id}
+          href={`https://www.youtube.com/watch?v=${video.id}`}
+          target="_blank"
+          rel="noreferrer"
+          className="group block overflow-hidden rounded-2xl border border-[#e7e5e4] bg-white transition-all duration-300 hover:border-[#fb7185] hover:shadow-lg"
+        >
+          <div className="relative aspect-video w-full overflow-hidden">
+            <img
+              src={video.thumbnailUrl}
+              alt={video.title}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+            {/* Play button overlay */}
+            <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all duration-300 group-hover:bg-black/30">
+              <div className="flex h-14 w-14 scale-75 items-center justify-center rounded-full bg-[#fb7185] opacity-0 shadow-lg transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
+                <Play className="ml-1 h-6 w-6 fill-white text-white" />
+              </div>
+            </div>
+          </div>
+          <div className="p-4">
+            <div className="line-clamp-2 text-sm font-semibold leading-snug text-[#292524] transition-colors group-hover:text-[#fb7185]">
+              {video.title}
+            </div>
+            <div className="mt-2 flex items-center gap-2 text-xs text-[#78716c]">
+              <span>{new Date(video.publishedAt).toLocaleDateString()}</span>
+              <span className="h-1 w-1 rounded-full bg-[#d6d3d1]" />
+              <span className="text-[#fb7185]">YouTube</span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  );
+}
