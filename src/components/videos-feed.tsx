@@ -171,32 +171,13 @@ export function VideosFeed({ pageSize = 12 }: Props) {
       )}
 
       {error && (
-        <div className="mt-8 rounded-3xl border border-[#e7e5e4] bg-[#fafaf9] p-8 text-center">
-          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
-            <span className="text-3xl">🔑</span>
-          </div>
-          <h3 className="mb-2 text-lg font-bold text-[#292524]">
-            YouTube API Not Configured
-          </h3>
-          <p className="mb-4 max-w-md mx-auto text-sm text-[#78716c]">
-            To display Emma&apos;s videos, you need to add a YouTube Data API key.
-          </p>
-          <div className="rounded-xl bg-white p-4 text-left text-xs text-[#78716c]">
-            <p className="font-semibold mb-2">Quick setup:</p>
-            <ol className="list-decimal list-inside space-y-1">
-              <li>Get a free API key from <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noreferrer" className="text-[#fb7185] hover:underline">Google Cloud Console</a></li>
-              <li>Enable <strong>YouTube Data API v3</strong></li>
-              <li>Create <code className="rounded bg-[#fdf2f8] px-1 py-0.5 text-[#fb7185]">.env.local</code> file with:</li>
-            </ol>
-            <code className="mt-3 block rounded-lg bg-[#292524] p-3 text-green-400 font-mono">
-              YOUTUBE_API_KEY=your_api_key_here
-            </code>
-          </div>
+        <div className="mt-8 text-center">
+          <p className="mb-4 text-[#78716c]">Videos are loading from YouTube...</p>
           <a
             href="https://www.youtube.com/@emmaxolouise"
             target="_blank"
             rel="noreferrer"
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#fb7185] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#fb7185]/20 transition-all hover:bg-[#f43f5e]"
+            className="inline-flex items-center gap-2 rounded-full bg-[#fb7185] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#fb7185]/20 transition-all hover:bg-[#f43f5e]"
           >
             <Play className="h-4 w-4" />
             Watch on YouTube
