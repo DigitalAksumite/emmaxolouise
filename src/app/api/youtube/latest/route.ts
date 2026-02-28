@@ -1,7 +1,6 @@
 import { fetchLatestVideosPage } from "@/lib/youtube";
 
-export const dynamic = "force-static";
-export const revalidate = 3600; // Revalidate every hour
+export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
@@ -14,12 +13,24 @@ export async function GET(request: Request) {
       pageToken: pageToken || undefined,
     });
 
-    return Response.json({ videos, nextPageToken });
+    return Response.json(
+      { videos, nextPageToken },
+      {
+        headers: {
+          "Cache-Control": "no-store, max-age=0",
+        },
+      }
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return Response.json(
       { videos: [], nextPageToken: undefined, error: message },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "no-store, max-age=0",
+        },
+      }
     );
   }
 }

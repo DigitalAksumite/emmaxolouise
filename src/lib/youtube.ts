@@ -43,7 +43,7 @@ export async function youtubeGet<T>(path: string, params: Record<string, string>
 
   const res = await fetch(url.toString(), {
     headers: { Accept: "application/json" },
-    next: { revalidate: 900 },
+    cache: "no-store",
   });
 
   if (!res.ok) {

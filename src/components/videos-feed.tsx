@@ -28,16 +28,24 @@ export function VideosFeed({ pageSize = 12 }: Props) {
   const [nextPageToken, setNextPageToken] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const loadingRef = useRef(loading);
+  
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const canLoadMore = useMemo(
-    () => !error && (Boolean(nextPageToken) || videos.length === 0),
-    [nextPageToken, videos.length, error]
+    () => !loading && !error && (Boolean(nextPageToken) || videos.length === 0),
+    [loading, nextPageToken, videos.length, error]
   );
 
   const load = useCallback(async () => {
-    if (loading) return;
+    if (loadingRef.current) return;
+
+    // Capture the token we're about to send
+    const requestToken = nextPageToken;
 
     setLoading(true);
     setError(null);
@@ -46,7 +54,7 @@ export function VideosFeed({ pageSize = 12 }: Props) {
       const endpoint = sortBy === "latest" ? "/api/youtube/latest" : "/api/youtube/popular";
       const url = new URL(endpoint, window.location.origin);
       url.searchParams.set("limit", String(pageSize));
-      if (nextPageToken) url.searchParams.set("pageToken", nextPageToken);
+      if (requestToken) url.searchParams.set("pageToken", requestToken);
 
       const res = await fetch(url.toString());
       const json = (await res.json()) as ApiResponse;
@@ -61,14 +69,18 @@ export function VideosFeed({ pageSize = 12 }: Props) {
         return [...prev, ...incoming];
       });
 
-      setNextPageToken(json.nextPageToken);
+      // Only continue if we got new videos AND a different page token
+      const receivedNewVideos = (json.videos?.length ?? 0) > 0;
+      const hasNextPage = json.nextPageToken && json.nextPageToken !== requestToken;
+      
+      setNextPageToken(hasNextPage ? json.nextPageToken : undefined);
     } catch (e) {
       const message = e instanceof Error ? e.message : "Failed to load videos.";
       setError(message);
     } finally {
       setLoading(false);
     }
-  }, [loading, nextPageToken, pageSize, sortBy]);
+  }, [nextPageToken, pageSize, sortBy]);
 
   // Reset and reload when sort changes
   useEffect(() => {
@@ -83,6 +95,11 @@ export function VideosFeed({ pageSize = 12 }: Props) {
     }
   }, [videos.length, error, loading, load]);
 
+  const loadRef = useRef(load);
+  useEffect(() => {
+    loadRef.current = load;
+  }, [load]);
+
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return;
@@ -91,14 +108,14 @@ export function VideosFeed({ pageSize = 12 }: Props) {
       (entries) => {
         if (!entries[0]?.isIntersecting) return;
         if (!canLoadMore) return;
-        void load();
+        void loadRef.current();
       },
-      { rootMargin: "600px" }
+      { rootMargin: "200px", threshold: 0 }
     );
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [canLoadMore, load]);
+  }, [canLoadMore]);
 
   return (
     <div className="mt-8">
