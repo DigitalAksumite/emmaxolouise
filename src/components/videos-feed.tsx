@@ -172,7 +172,8 @@ export function VideosFeed({ pageSize = 12 }: Props) {
 
       {error && (
         <div className="mt-8 text-center">
-          <p className="mb-4 text-[#78716c]">Videos are loading from YouTube...</p>
+          <p className="mb-2 text-[#78716c]">Unable to load videos</p>
+          <p className="mb-4 text-xs text-red-500">{error}</p>
           <a
             href="https://www.youtube.com/@emmaxolouise"
             target="_blank"
